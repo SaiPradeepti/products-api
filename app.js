@@ -15,7 +15,7 @@ app.get("/api/v1/products", (req, res) => {
 });
 
 app.get("/api/v1/products/:id", (req, res) => {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
 
   if (id > products.length) {
     res.status(400).json({
@@ -24,7 +24,7 @@ app.get("/api/v1/products/:id", (req, res) => {
     });
   }
 
-  const product = products.filter((item) => item.id === id);
+  const product = products.products.find((item) => item.id === id);
   res.status(200).json({
     status: "success",
     data: {
