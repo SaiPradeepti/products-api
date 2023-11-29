@@ -50,6 +50,28 @@ app.post("/api/v1/products", (req, res) => {
   });
 });
 
+app.patch("/api/v1/products/:id", (req, res) => {
+  if (parseInt(req.params.id) > products.length) {
+    res.status(400).json({
+      status: "fail",
+      message: "Invalid ID",
+    });
+  }
+  products.map((product) => {
+    if (parseInt(req.params.id) === product.id) {
+      const updatedProduct = Object.assign(product, req.body);
+      return updatedProduct;
+    }
+  });
+  fs.writeFile(`./data.json`, JSON.stringify(products), (err) => {
+    if (err) console.log(err);
+    res.status(200).json({
+      status: "success",
+      data: products,
+    });
+  });
+});
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`App is running on port ${port}`);
