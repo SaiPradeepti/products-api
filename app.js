@@ -6,16 +6,16 @@ app.use(express.json());
 
 const products = JSON.parse(fs.readFileSync("./data.json"));
 
-app.get("/api/v1/products", (req, res) => {
+const getAllProducts = (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
       products: products,
     },
   });
-});
+};
 
-app.get("/api/v1/products/:id", (req, res) => {
+const getProduct = (req, res) => {
   const id = parseInt(req.params.id);
 
   if (id > products.length) {
@@ -32,9 +32,9 @@ app.get("/api/v1/products/:id", (req, res) => {
       product,
     },
   });
-});
+};
 
-app.post("/api/v1/products", (req, res) => {
+const createProduct = (req, res) => {
   const newProduct = {
     id: products[products.length - 1].id + 1,
     ...req.body,
@@ -48,9 +48,9 @@ app.post("/api/v1/products", (req, res) => {
       },
     });
   });
-});
+};
 
-app.patch("/api/v1/products/:id", (req, res) => {
+const updateProduct = (req, res) => {
   if (parseInt(req.params.id) > products.length) {
     res.status(400).json({
       status: "fail",
@@ -70,9 +70,9 @@ app.patch("/api/v1/products/:id", (req, res) => {
       data: products,
     });
   });
-});
+};
 
-app.delete("/api/v1/products/:id", (req, res) => {
+const deleteProduct = (req, res) => {
   if (parseInt(req.params.id) > products.length) {
     res.status(400).json({
       status: "fail",
@@ -90,7 +90,20 @@ app.delete("/api/v1/products/:id", (req, res) => {
       data: null,
     });
   });
-});
+};
+
+// app.get("/api/v1/products", getAllProducts);
+// app.get("/api/v1/products/:id", getProduct);
+// app.post("/api/v1/products", createProduct);
+// app.patch("/api/v1/products/:id", updateProduct);
+// app.delete("/api/v1/products/:id", deleteProduct);
+// refactoring the above routes
+app.route("/api/v1/products").get(getAllProducts).post(createProduct);
+app
+  .route("/api/v1/products/:id")
+  .get(getProduct)
+  .patch(updateProduct)
+  .delete(deleteProduct);
 
 const port = 3000;
 app.listen(port, () => {
