@@ -72,6 +72,26 @@ app.patch("/api/v1/products/:id", (req, res) => {
   });
 });
 
+app.delete("/api/v1/products/:id", (req, res) => {
+  if (parseInt(req.params.id) > products.length) {
+    res.status(400).json({
+      status: "fail",
+      message: "Invalid ID",
+    });
+  }
+
+  const newProducts = products.filter(
+    (product) => product.id !== parseInt(req.params.id),
+  );
+  fs.writeFile(`./data.json`, JSON.stringify(newProducts), (err) => {
+    if (err) console.log(err);
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  });
+});
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`App is running on port ${port}`);
